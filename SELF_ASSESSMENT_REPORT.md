@@ -1,0 +1,20 @@
+# Self-assessment IA#1 (Remediated)
+Submitted by: 24120090 Đặng Hồng Minh
+Total I claim: 95/100
+
+| Criterion | Max | I claim | Evidence |
+|---|---|---|---|
+| Behaviour | 30 | 29 | Đã sửa triệt để 2 bug: (1) Ngưỡng free ship được so sánh trực tiếp với `subtotal` thay vì tổng sau VAT tại [cart.js:L21](file:///d:/10_Web/IA1/24120090_95/src/cart.js#L21) (`480000` trả về chính xác `548400`); (2) Số lượng `<= 0` (gồm `0`, `-1`) và không phải số nguyên đã bắt buộc throw `RangeError` tại [cart.js:L15-L17](file:///d:/10_Web/IA1/24120090_95/src/cart.js#L15-L17). Empty cart trả về `0` [cart.js:L3-L5](file:///d:/10_Web/IA1/24120090_95/src/cart.js#L3-L5). Kết quả làm tròn bằng `Math.round()` trả về kiểu `number`. |
+| Tests | 20 | 19 | Đã loại bỏ hoàn toàn Jest để tuân thủ quy định zero-dependency; viết lại toàn bộ bằng Node.js built-in `node:test` và `node:assert/strict` tại [cart.test.js](file:///d:/10_Web/IA1/24120090_95/test/cart.test.js). Gồm 12 unit tests chia thành 5 suites bao phủ toàn diện: worked example, empty cart, ngưỡng cận biên (480k ra 548.4k, 500k, 600k), kiểm tra lỗi `qty` (0, -1, 1.5, chuỗi), giá âm, giá 0đ, và làm tròn số. Lệnh `npm test` chạy 100% PASS. |
+| Harness | 20 | 19 | Dự án đạt chuẩn Zero External Dependencies 100% (không có `node_modules` hay thư viện ngoài). `package.json` có script `"test": "node --test"`, `"lint": "node --check src/cart.js test/cart.test.js"` và gate `"npm run gate"`. [CLAUDE.md](file:///d:/10_Web/IA1/24120090_95/CLAUDE.md) quy định rõ ràng luật cấm dependency. File [.github/workflows/ci.yml](file:///d:/10_Web/IA1/24120090_95/.github/workflows/ci.yml) được tinh chỉnh chạy thẳng `npm run gate` trên Node 20 không cần `npm ci`. Lịch sử Git đã có các commit rõ ràng theo từng giai đoạn. |
+| Brief | 15 | 14 | [brief.md](file:///d:/10_Web/IA1/24120090_95/brief.md) đã được viết lại chi tiết, loại bỏ hoàn toàn mọi điểm mập mờ: nêu rõ công thức so sánh `subtotal >= freeShipFrom` kèm ví dụ phản chứng cụ thể 480k, quy định rõ số lượng phải là số nguyên dương nghiêm ngặt ($qty \in \mathbb{Z}^+$), và ràng buộc cấm Jest / cấm external dependencies. |
+| AI-LOG | 15 | 14 | [AI-LOG.md](file:///d:/10_Web/IA1/24120090_95/AI-LOG.md) tuân thủ đúng template Classroom: ghi nhận trung thực buổi làm việc đầu tiên cùng sai lầm đã phạm phải, bổ sung chi tiết buổi remediation ngày 2026-10-22 giải quyết feedback của thầy (chi tiết Prompt, Kept, Changed/Rejected loại bỏ Jest và sửa logic, By hand tự tay dọn dẹp môi trường và cấu hình gate). |
+
+## What I did not manage
+- Trong lần nộp đầu tiên, do hiểu chưa sâu về quy định cấm dependency của đề bài nên đã tự ý cài đặt Jest và dùng script test của Jest. Ngoài ra, việc viết brief chưa chặt chẽ đã dẫn đến 2 lỗi logic nghiệm trọng (so sánh ngưỡng ship sau thuế và bỏ sót kiểm tra `qty <= 0`), đồng thời chưa thực hiện commit Git từng bước khiến CI chưa chạy thực tế.
+- Trong lần sửa này, tất cả các vấn đề trên đã được khắc phục hoàn toàn. Tuy nhiên, em tự trừ 1 điểm ở mỗi tiêu chí (như Tests 19/20, Harness 19/20, Brief 14/15, AI-LOG 14/15, Behaviour 29/30) vì bài cần qua 1 vòng phản hồi từ giảng viên mới đạt độ hoàn thiện tối đa thay vì đạt ngay từ đầu.
+
+## What I would do differently
+1. Đọc kỹ từng câu chữ của đề bài trước khi bắt đầu, đặc biệt là các ràng buộc kỹ thuật cốt lõi như "no dependencies" — Node.js hiện đại đã có sẵn `node:test` và `node:assert/strict` mà không cần bất kỳ thư viện bên ngoài nào.
+2. Viết brief thật cụ thể với các ca biên (edge cases) và ví dụ phản chứng trước khi nhờ AI hỗ trợ sinh code. Không dùng từ ngữ chung chung như "thỏa ngưỡng" hay "số nguyên" mà phải nói rõ "so sánh trên subtotal trước VAT" và "số nguyên dương $qty > 0$".
+3. Thực hiện commit Git theo từng bước nhỏ (atomic commits) ngay từ đầu để đảm bảo repo có lịch sử phát triển minh bạch và CI được kích hoạt liên tục.
